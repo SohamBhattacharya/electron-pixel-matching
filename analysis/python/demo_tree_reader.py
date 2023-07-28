@@ -128,6 +128,8 @@ def main() :
                     norm = mpl.colors.LogNorm(),
                 )
                 plt.colorbar(label = "HGCal hit energy [GeV]", location = "right", orientation="vertical")
+                plt.xlabel("z [cm]")
+                plt.ylabel("rho [cm]")
                 
                 # Get the indices of the pixel hits on the same half of the detector as the electron
                 # That is, hit.z and ele.eta should have the same sign
@@ -138,8 +140,9 @@ def main() :
                     c = "r"
                 )
                 
-                plt.show(block = False)
                 plt.tight_layout()
+                #plt.show(block = False)
+                plt.savefig("test.pdf")
                 print("Plotted")
     
     return 0
