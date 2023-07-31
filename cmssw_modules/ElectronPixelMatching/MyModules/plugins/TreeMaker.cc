@@ -18,74 +18,75 @@
 
 
 // system include files
-# include <limits>
-# include <memory>
+#include <limits>
+#include <memory>
 
 // user include files
 
 
 
-# include "CommonTools/UtilAlgos/interface/TFileService.h"
-# include "DataFormats/CaloRecHit/interface/CaloCluster.h"
-# include "DataFormats/CaloTowers/interface/CaloTowerDefs.h"
-# include "DataFormats/Common/interface/MapOfVectors.h"
-# include "DataFormats/Common/interface/ValueMap.h"
-# include "DataFormats/EcalRecHit/interface/EcalRecHit.h"
-# include "DataFormats/EgammaCandidates/interface/Electron.h"
-# include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
-# include "DataFormats/EgammaCandidates/interface/Photon.h"
-# include "DataFormats/ForwardDetId/interface/HGCEEDetId.h"
-# include "DataFormats/ForwardDetId/interface/HGCalDetId.h"
-# include "DataFormats/FWLite/interface/ESHandle.h"
-# include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
-# include "DataFormats/HGCalReco/interface/Trackster.h"
-# include "DataFormats/HGCRecHit/interface/HGCRecHit.h"
-# include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-# include "DataFormats/JetReco/interface/PFJet.h"
-# include "DataFormats/Math/interface/LorentzVector.h"
-# include "DataFormats/Math/interface/deltaPhi.h"
-# include "DataFormats/Math/interface/deltaR.h"
-# include "DataFormats/ParticleFlowReco/interface/HGCalMultiCluster.h"
-# include "DataFormats/ParticleFlowReco/interface/PFRecHit.h"
-# include "DataFormats/RecoCandidate/interface/RecoCandidate.h"
-# include "DataFormats/TrackReco/interface/Track.h"
-# include "DataFormats/TrackReco/interface/TrackFwd.h"
-# include "DataFormats/TrackerRecHit2D/interface/SiPixelRecHit.h"
-# include "DataFormats/TrackerRecHit2D/interface/SiPixelRecHitCollection.h"
-# include "DataFormats/VertexReco/interface/Vertex.h"
-# include "FWCore/Framework/interface/Event.h"
-# include "FWCore/Framework/interface/ESHandle.h"
-# include "FWCore/Framework/interface/Frameworkfwd.h"
-# include "FWCore/Framework/interface/MakerMacros.h"
-# include "FWCore/Framework/interface/one/EDAnalyzer.h"
-# include "FWCore/ParameterSet/interface/ParameterSet.h"
-# include "FWCore/ServiceRegistry/interface/Service.h"
-# include "FWCore/Utilities/interface/InputTag.h"
-# include "Geometry/CaloTopology/interface/HGCalTopology.h"
-# include "Geometry/Records/interface/CaloGeometryRecord.h"
-# include "Geometry/Records/interface/IdealGeometryRecord.h"
-# include "RecoLocalCalo/HGCalRecAlgos/interface/RecHitTools.h"
-# include "SimDataFormats/CaloAnalysis/interface/CaloParticle.h"
-# include "SimDataFormats/CaloAnalysis/interface/SimCluster.h"
-# include "SimDataFormats/CaloHit/interface/PCaloHit.h"
-# include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
-# include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "DataFormats/CaloRecHit/interface/CaloCluster.h"
+#include "DataFormats/CaloTowers/interface/CaloTowerDefs.h"
+#include "DataFormats/Common/interface/MapOfVectors.h"
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "DataFormats/EcalRecHit/interface/EcalRecHit.h"
+#include "DataFormats/EgammaCandidates/interface/Electron.h"
+#include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
+#include "DataFormats/EgammaCandidates/interface/Photon.h"
+#include "DataFormats/ForwardDetId/interface/HGCEEDetId.h"
+#include "DataFormats/ForwardDetId/interface/HGCalDetId.h"
+#include "DataFormats/FWLite/interface/ESHandle.h"
+#include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
+#include "DataFormats/HGCalReco/interface/Trackster.h"
+#include "DataFormats/HGCRecHit/interface/HGCRecHit.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/JetReco/interface/PFJet.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/ParticleFlowReco/interface/HGCalMultiCluster.h"
+#include "DataFormats/ParticleFlowReco/interface/PFRecHit.h"
+#include "DataFormats/RecoCandidate/interface/RecoCandidate.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "DataFormats/TrackerRecHit2D/interface/SiPixelRecHit.h"
+#include "DataFormats/TrackerRecHit2D/interface/SiPixelRecHitCollection.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Framework/interface/Frameworkfwd.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "FWCore/Utilities/interface/InputTag.h"
+#include "Geometry/CaloTopology/interface/HGCalTopology.h"
+#include "Geometry/CommonTopologies/interface/GeomDetEnumerators.h"
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
+#include "Geometry/Records/interface/IdealGeometryRecord.h"
+#include "RecoLocalCalo/HGCalRecAlgos/interface/RecHitTools.h"
+#include "SimDataFormats/CaloAnalysis/interface/CaloParticle.h"
+#include "SimDataFormats/CaloAnalysis/interface/SimCluster.h"
+#include "SimDataFormats/CaloHit/interface/PCaloHit.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
-# include "ElectronPixelMatching/MyModules/interface/Common.h"
-# include "ElectronPixelMatching/MyModules/interface/Constants.h"
-# include "ElectronPixelMatching/MyModules/interface/TreeOutputInfo.h"
+#include "ElectronPixelMatching/MyModules/interface/Common.h"
+#include "ElectronPixelMatching/MyModules/interface/Constants.h"
+#include "ElectronPixelMatching/MyModules/interface/TreeOutputInfo.h"
 
-# include <CLHEP/Matrix/Matrix.h>
-# include <CLHEP/Vector/ThreeVector.h>
-# include <CLHEP/Vector/ThreeVector.h>
+#include <CLHEP/Matrix/Matrix.h>
+#include <CLHEP/Vector/ThreeVector.h>
+#include <CLHEP/Vector/ThreeVector.h>
 
-# include <Compression.h>
-# include <TH1F.h>
-# include <TH2F.h>
-# include <TMatrixD.h>
-# include <TTree.h> 
-# include <TVector2.h> 
-# include <TVectorD.h> 
+#include <Compression.h>
+#include <TH1F.h>
+#include <TH2F.h>
+#include <TMatrixD.h>
+#include <TTree.h> 
+#include <TVector2.h> 
+#include <TVectorD.h> 
 
 //
 // class declaration
@@ -258,6 +259,11 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig) :
     treeOutput->registerVar<Common::vfloat>("v_hgcalEle_phi");
     treeOutput->registerVar<Common::vfloat>("v_hgcalEle_mass");
     
+    treeOutput->registerVar<Common::vfloat>("v_hgcalEle_vtx_x");
+    treeOutput->registerVar<Common::vfloat>("v_hgcalEle_vtx_y");
+    treeOutput->registerVar<Common::vfloat>("v_hgcalEle_vtx_z");
+    treeOutput->registerVar<Common::vfloat>("v_hgcalEle_vtx_rho");
+    
     treeOutput->registerVar<Common::vint>("v_hgcalEle_matchedGenEle_idx");
     treeOutput->registerVar<Common::vfloat>("v_hgcalEle_matchedGenEle_deltaR");
     treeOutput->registerVar<Common::vfloat>("v_hgcalEle_matchedGenEle_pt");
@@ -274,6 +280,14 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig) :
     treeOutput->registerVar<Common::vfloat>("v_hgcalEle_gsfTrack_pt");
     treeOutput->registerVar<Common::vfloat>("v_hgcalEle_gsfTrack_eta");
     treeOutput->registerVar<Common::vfloat>("v_hgcalEle_gsfTrack_phi");
+    
+    treeOutput->registerVar<Common::vint>("v_hgcalEle_gsfTrack_hit_count");
+    treeOutput->registerVar<Common::vvint>("vv_hgcalEle_gsfTrack_hit_detector");
+    treeOutput->registerVar<Common::vvint>("vv_hgcalEle_gsfTrack_hit_isInnerTracker");
+    treeOutput->registerVar<Common::vvfloat>("vv_hgcalEle_gsfTrack_hit_globalPos_x");
+    treeOutput->registerVar<Common::vvfloat>("vv_hgcalEle_gsfTrack_hit_globalPos_y");
+    treeOutput->registerVar<Common::vvfloat>("vv_hgcalEle_gsfTrack_hit_globalPos_z");
+    treeOutput->registerVar<Common::vvfloat>("vv_hgcalEle_gsfTrack_hit_globalPos_rho");
     
     treeOutput->registerVar<Common::vfloat>("v_hgcalEle_SC_energy");
     treeOutput->registerVar<Common::vfloat>("v_hgcalEle_SC_ET");
@@ -320,6 +334,7 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig) :
     
     // 
     treeOutput->registerVar<int>("pixelRecHit_count");
+    treeOutput->registerVar<Common::vint>("v_pixelRecHit_isValid");
     treeOutput->registerVar<Common::vfloat>("v_pixelRecHit_globalPos_x");
     treeOutput->registerVar<Common::vfloat>("v_pixelRecHit_globalPos_y");
     treeOutput->registerVar<Common::vfloat>("v_pixelRecHit_globalPos_z");
@@ -570,6 +585,7 @@ void TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         
         nRecHit++;
         
+        treeOutput->fillVarV("v_pixelRecHit_isValid", (int) recHit.isValid());
         treeOutput->fillVarV("v_pixelRecHit_globalPos_x", globalPos.x());
         treeOutput->fillVarV("v_pixelRecHit_globalPos_y", globalPos.y());
         treeOutput->fillVarV("v_pixelRecHit_globalPos_z", globalPos.z());
@@ -630,6 +646,21 @@ void TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         treeOutput->fillVarV("v_hgcalEle_phi", ele.phi());
         treeOutput->fillVarV("v_hgcalEle_mass", ele.mass());
         
+        const auto& ele_vtx_position = ele.vertex();
+        treeOutput->fillVarV("v_hgcalEle_vtx_x", ele_vtx_position.x());
+        treeOutput->fillVarV("v_hgcalEle_vtx_y", ele_vtx_position.y());
+        treeOutput->fillVarV("v_hgcalEle_vtx_z", ele_vtx_position.z());
+        treeOutput->fillVarV("v_hgcalEle_vtx_rho", ele_vtx_position.rho());
+        
+        //printf(
+        //    "(%0.2f, %0.2f), "
+        //    "(%0.2f, %0.2f), "
+        //    "\n",
+        //    ele.vz(), std::sqrt(ele.vx()*ele.vx() + ele.vy()*ele.vy()),
+        //    ele_vtx_position.z(), ele_vtx_position.rho()
+        //);
+        
+        // Electron GSF track //
         const auto& ele_gsfTrack = ele.gsfTrack();
         
         treeOutput->fillVarV("v_hgcalEle_gsfTrack_isValid", (int) ele_gsfTrack.isNonnull());
@@ -641,6 +672,60 @@ void TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         treeOutput->fillVarV("v_hgcalEle_gsfTrack_eta", ele_gsfTrack.isNonnull()? ele_gsfTrack->eta(): FLT_MAX);
         treeOutput->fillVarV("v_hgcalEle_gsfTrack_phi", ele_gsfTrack.isNonnull()? ele_gsfTrack->phi(): FLT_MAX);
         
+        int gsfTrack_nHit = 0;
+        Common::vint v_hgcalEle_gsfTrack_hit_detector;
+        Common::vint v_hgcalEle_gsfTrack_hit_isInnerTracker;
+        Common::vfloat v_hgcalEle_gsfTrack_hit_globalPos_x;
+        Common::vfloat v_hgcalEle_gsfTrack_hit_globalPos_y;
+        Common::vfloat v_hgcalEle_gsfTrack_hit_globalPos_z;
+        Common::vfloat v_hgcalEle_gsfTrack_hit_globalPos_rho;
+        
+        if(ele_gsfTrack.isNonnull())
+        {
+            for (trackingRecHit_iterator iHit = ele_gsfTrack->recHitsBegin(); iHit != ele_gsfTrack->recHitsEnd(); iHit++)
+            {
+                const TrackingRecHit *trkHit = (*iHit);
+                
+                if (trkHit->isValid())
+                {
+                    gsfTrack_nHit++;
+                    const auto& hit_globalPos = trkHit->globalPosition();
+                    const auto& hit_subDet = trkHit->det()->subDetector();
+                    
+                    printf(
+                        "gsfTrack rechit: "
+                        "(x %0.2f, y %0.2f, z %0.2f, rho %0.2f), "
+                        "(subDet %d, isInnerTracker %d), "
+                        "\n",
+                        hit_globalPos.x(),
+                        hit_globalPos.y(),
+                        hit_globalPos.z(),
+                        hit_globalPos.perp(),
+                        
+                        (int) hit_subDet,
+                        (int) GeomDetEnumerators::isInnerTracker(hit_subDet)
+                    );
+                    
+                    v_hgcalEle_gsfTrack_hit_detector.push_back(hit_subDet);
+                    v_hgcalEle_gsfTrack_hit_isInnerTracker.push_back(GeomDetEnumerators::isInnerTracker(hit_subDet));
+                    v_hgcalEle_gsfTrack_hit_globalPos_x.push_back(hit_globalPos.x());
+                    v_hgcalEle_gsfTrack_hit_globalPos_y.push_back(hit_globalPos.y());
+                    v_hgcalEle_gsfTrack_hit_globalPos_z.push_back(hit_globalPos.z());
+                    v_hgcalEle_gsfTrack_hit_globalPos_rho.push_back(hit_globalPos.perp());
+                }
+            }
+        }
+        
+        treeOutput->fillVarV("v_hgcalEle_gsfTrack_hit_count", gsfTrack_nHit);
+        treeOutput->fillVarVV("vv_hgcalEle_gsfTrack_hit_detector", v_hgcalEle_gsfTrack_hit_detector);
+        treeOutput->fillVarVV("vv_hgcalEle_gsfTrack_hit_isInnerTracker", v_hgcalEle_gsfTrack_hit_isInnerTracker);
+        treeOutput->fillVarVV("vv_hgcalEle_gsfTrack_hit_globalPos_x", v_hgcalEle_gsfTrack_hit_globalPos_x);
+        treeOutput->fillVarVV("vv_hgcalEle_gsfTrack_hit_globalPos_y", v_hgcalEle_gsfTrack_hit_globalPos_y);
+        treeOutput->fillVarVV("vv_hgcalEle_gsfTrack_hit_globalPos_z", v_hgcalEle_gsfTrack_hit_globalPos_z);
+        treeOutput->fillVarVV("vv_hgcalEle_gsfTrack_hit_globalPos_rho", v_hgcalEle_gsfTrack_hit_globalPos_rho);
+        
+        
+        // Electron supercluster //
         const auto& ele_SC = ele.superCluster();
         const auto& v_superCluster_HandF = ele_SC->hitsAndFractions();
         const auto& ele_SC_position = ele_SC->position();
@@ -674,8 +759,6 @@ void TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         Common::vfloat v_hgcalEle_SC_clus_rho;
         Common::vint v_hgcalEle_SC_clus_detector;
         Common::vint v_hgcalEle_SC_clus_layer;
-        
-        //treeOutput->registerVar<Common::vint>("v_hgcalEle_SC_clus_count");
         
         const auto& v_superCluster_clus = ele_SC->clusters();
         

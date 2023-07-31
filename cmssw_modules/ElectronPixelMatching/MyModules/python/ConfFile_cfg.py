@@ -342,7 +342,8 @@ process.treeMaker = cms.EDAnalyzer(
     ############################## RECO ##############################
     
     label_pileup = cms.InputTag("addPileupInfo"),
-    label_rho = cms.InputTag("fixedGridRhoFastjetAll"),
+    #label_rho = cms.InputTag("fixedGridRhoFastjetAll"),
+    label_rho = cms.InputTag("fixedGridRhoFastjetAllTmp"),
     
     label_EcalEBRecHit = cms.InputTag("ecalRecHit", "EcalRecHitsEB"),
     
