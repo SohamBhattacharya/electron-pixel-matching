@@ -4,6 +4,7 @@
 *~
 .#*
 .*.swp
+*.fuse
 
 # We probaly do not want to push plots and documents
 *plots*
