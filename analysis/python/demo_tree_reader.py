@@ -97,8 +97,8 @@ def main() :
                 "eta": tree_branches["v_genEle_eta"],
                 "phi": tree_branches["v_genEle_phi"],
                 "energy": tree_branches["v_genEle_energy"],
-                "vtx_rho": 0.1*tree_branches["v_genEle_vtx_rho"],
-                "vtx_z": 0.1*tree_branches["v_genEle_vtx_z"],
+                "vtx_rho": tree_branches["v_genEle_vtx_rho"],
+                "vtx_z": tree_branches["v_genEle_vtx_z"],
             }
         )
         
@@ -119,10 +119,10 @@ def main() :
         hgcalEle_gsfTrack_hits = awk.zip(
             arrays = {
                 "isInnerTracker": tree_branches["vv_hgcalEle_gsfTrack_hit_isInnerTracker"],
-                "rho": 0.1*tree_branches["vv_hgcalEle_gsfTrack_hit_globalPos_rho"],
-                "x": 0.1*tree_branches["vv_hgcalEle_gsfTrack_hit_globalPos_x"],
-                "y": 0.1*tree_branches["vv_hgcalEle_gsfTrack_hit_globalPos_y"],
-                "z": 0.1*tree_branches["vv_hgcalEle_gsfTrack_hit_globalPos_z"],
+                "rho": tree_branches["vv_hgcalEle_gsfTrack_hit_globalPos_rho"],
+                "x": tree_branches["vv_hgcalEle_gsfTrack_hit_globalPos_x"],
+                "y": tree_branches["vv_hgcalEle_gsfTrack_hit_globalPos_y"],
+                "z": tree_branches["vv_hgcalEle_gsfTrack_hit_globalPos_z"],
             }
         )
         
@@ -145,8 +145,8 @@ def main() :
                 
                 "gsfTrack_hits": hgcalEle_gsfTrack_hits,
                 
-                "vtx_rho": 0.1*tree_branches["v_hgcalEle_vtx_rho"],
-                "vtx_z": 0.1*tree_branches["v_hgcalEle_vtx_z"],
+                "vtx_rho": tree_branches["v_hgcalEle_vtx_rho"],
+                "vtx_z": tree_branches["v_hgcalEle_vtx_z"],
             },
             depth_limit = 1, # Do not broadcast
         )
@@ -156,11 +156,10 @@ def main() :
         
         pixelRecHits = awk.zip(
             arrays = {
-                # Convert mm to cm
-                "rho": 0.1*tree_branches["v_pixelRecHit_globalPos_rho"],
-                "x": 0.1*tree_branches["v_pixelRecHit_globalPos_x"],
-                "y": 0.1*tree_branches["v_pixelRecHit_globalPos_y"],
-                "z": 0.1*tree_branches["v_pixelRecHit_globalPos_z"],
+                "rho": tree_branches["v_pixelRecHit_globalPos_rho"],
+                "x": tree_branches["v_pixelRecHit_globalPos_x"],
+                "y": tree_branches["v_pixelRecHit_globalPos_y"],
+                "z": tree_branches["v_pixelRecHit_globalPos_z"],
             },
         )
         
