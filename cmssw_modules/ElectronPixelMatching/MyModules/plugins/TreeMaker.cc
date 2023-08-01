@@ -692,19 +692,19 @@ void TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                     const auto& hit_globalPos = trkHit->globalPosition();
                     const auto& hit_subDet = trkHit->det()->subDetector();
                     
-                    printf(
-                        "gsfTrack rechit: "
-                        "(x %0.2f, y %0.2f, z %0.2f, rho %0.2f), "
-                        "(subDet %d, isInnerTracker %d), "
-                        "\n",
-                        hit_globalPos.x(),
-                        hit_globalPos.y(),
-                        hit_globalPos.z(),
-                        hit_globalPos.perp(),
-                        
-                        (int) hit_subDet,
-                        (int) GeomDetEnumerators::isInnerTracker(hit_subDet)
-                    );
+                    //printf(
+                    //    "gsfTrack rechit: "
+                    //    "(x %0.2f, y %0.2f, z %0.2f, rho %0.2f), "
+                    //    "(subDet %d, isInnerTracker %d), "
+                    //    "\n",
+                    //    hit_globalPos.x(),
+                    //    hit_globalPos.y(),
+                    //    hit_globalPos.z(),
+                    //    hit_globalPos.perp(),
+                    //    
+                    //    (int) hit_subDet,
+                    //    (int) GeomDetEnumerators::isInnerTracker(hit_subDet)
+                    //);
                     
                     v_hgcalEle_gsfTrack_hit_detector.push_back(hit_subDet);
                     v_hgcalEle_gsfTrack_hit_isInnerTracker.push_back(GeomDetEnumerators::isInnerTracker(hit_subDet));

@@ -26,6 +26,8 @@ d_conditionOpt["PhaseIISpring22DRMiniAOD"] = {
 import FWCore.ParameterSet.VarParsing as VarParsing
 options = VarParsing.VarParsing("analysis")
 
+options.outputFile = "ntupleTree.root"
+
 options.register("sourceFile",
     "", # Default value
     VarParsing.VarParsing.multiplicity.singleton, # singleton or list
@@ -38,20 +40,6 @@ options.register("dataset",
     VarParsing.VarParsing.multiplicity.singleton, # singleton or list
     VarParsing.VarParsing.varType.string, # string, int, or float
     "Dataset name; will fetch filelist from DAS" # Description
-)
-
-options.register("outputDir",
-    "", # Default value
-    VarParsing.VarParsing.multiplicity.singleton, # singleton or list
-    VarParsing.VarParsing.varType.string, # string, int, or float
-    "Output directory" # Description
-)
-
-options.register("outFileBaseName",
-    "ntupleTree", # Default value
-    VarParsing.VarParsing.multiplicity.singleton, # singleton or list
-    VarParsing.VarParsing.varType.string, # string, int, or float
-    "Output file base name. Number and extenstion will be added automatically." # Description
 )
 
 options.register("outFileNumber",
@@ -271,13 +259,14 @@ if (options.outFileNumber >= 0) :
     
     outFileSuffix = "%s_%d" %(outFileSuffix, options.outFileNumber)
 
-outFile = "%s%s.root" %(options.outFileBaseName, outFileSuffix)
+outputDir = os.path.dirname(options.outputFile)
+outFileNoExt, outFileExt = os.path.splitext(options.outputFile)
 
-if (len(options.outputDir)) :
+outFile = f"{outFileNoExt}{outFileSuffix}{outFileExt}"
+
+if (len(outputDir)) :
     
-    os.system("mkdir -p %s" %(options.outputDir))
-    
-    outFile = "%s/%s" %(options.outputDir, outFile)
+    os.system("mkdir -p %s" %(outputDir))
 
 
 process.source = cms.Source("PoolSource",

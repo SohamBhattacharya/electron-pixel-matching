@@ -6,13 +6,21 @@ import uproot
 
 import utils
 
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "Helvetica",
+    "font.weight": "bold",
+    "font.size": 15,
+})
+
 
 def main() :
     
     l_filename = [
-        "../ntupleTree.root:treeMaker/tree",
+        #"../ntupleTree.root:treeMaker/tree",
         #"../data/ntuples/DoubleElectron_FlatPt-1To100-gun_Phase2Fall22DRMiniAOD-noPU_125X_mcRun4_realistic_v2-v1/ntupleTree.root:treeMaker/tree",
         #"../data/ntuples/RelValZEE_14_CMSSW_13_1_0-131X_mcRun4_realistic_v5_2026D95noPU-v1/ntupleTree.root:treeMaker/tree",
+        "../data/ntuples/RelValZEE_14_CMSSW_13_1_0-131X_mcRun4_realistic_v5_2026D95noPU-v1/ntupleTree_numEvent200.root:treeMaker/tree",
     ]
     
     print("")
@@ -23,6 +31,7 @@ def main() :
     for tree_branches in uproot.iterate(
         files = l_filename,
         expressions = [
+            "genEle_count",
             "genEle_count",
             "v_genEle_charge",
             "v_genEle_pt",
@@ -166,7 +175,7 @@ def main() :
         print("")
         
         # Loop over events, electrons
-        # This is slow -- just to mess aroudn with
+        # This is slow -- just to mess around with
         # Will use awkward slicing operations later
         
         assert(len(hgcalEles) == len(pixelRecHits))
@@ -225,6 +234,7 @@ def main() :
                 )
                 
                 plot_xrange = numpy.array([-20, 400])
+                plot_yrange = numpy.array([-5, 160])
                 
                 if (eles.eta[iEle] < 0) :
                     
@@ -262,11 +272,11 @@ def main() :
                     f"({eles.genEle[iEle].vtx_rho}, {eles.genEle[iEle].vtx_z})"
                 )
                 
-                axes_scatter_rhoz.set_xlabel("z [cm]")
-                axes_scatter_rhoz.set_ylabel("rho [cm]")
+                axes_scatter_rhoz.set_xlabel("z [cm]", weight='bold')
+                axes_scatter_rhoz.set_ylabel(r"$\rho$ [cm]")
                 
                 axes_scatter_rhoz.set_xlim(plot_xrange)
-                axes_scatter_rhoz.set_ylim([-5, 130])
+                axes_scatter_rhoz.set_ylim(plot_yrange)
                 
                 fig_scatter_rhoz.tight_layout()
                 fig_scatter_rhoz.show()#block = False)
