@@ -54,6 +54,9 @@ fig.colorbar(
 
 line_x = [min(x), max(x)]
 
+# Convert vector to line
+# https://math.libretexts.org/Bookshelves/Calculus/CLP-3_Multivariable_Calculus_(Feldman_Rechnitzer_and_Yeager)/01%3A_Vectors_and_Geometry_in_Two_and_Three_Dimensions/1.03%3A_Equations_of_Lines_in_2d
+
 slope1 = eig1[1]/eig1[0]
 line_y = numpy.polyval([-slope1, (slope1*mean_x)+mean_y], line_x)
 
