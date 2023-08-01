@@ -7,7 +7,7 @@ import scipy.linalg
 
 arr = numpy.random.multivariate_normal(
     mean = (300, 50),
-    cov = [[55, 50], [50, 1]],
+    cov = [[55, 50], [50, 100]],
     size = 2000
 )
 
