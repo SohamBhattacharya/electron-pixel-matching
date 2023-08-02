@@ -2,6 +2,8 @@ import awkward as awk
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy
+import scipy
+import scipy.linalg
 import uproot
 
 import utils
@@ -14,13 +16,56 @@ plt.rcParams.update({
 })
 
 
+def pca_2d(x, y, w = None) :
+    
+    if (w is None) :
+        w = numpy.ones(len(x))
+    
+    mean_x = numpy.average(x, weights = w)
+    mean_y = numpy.average(y, weights = w)
+    
+    cov_xx = numpy.average(w*(x - mean_x)**2, weights = w)
+    cov_yy = numpy.average(w*(y - mean_y)**2, weights = w)
+    cov_xy = numpy.average(w*(x - mean_x)*(y-mean_y), weights = w)
+    
+    covmat = numpy.array([
+        [cov_xx, cov_xy],
+        [cov_xy, cov_yy],
+    ])
+    
+    eigvals, eigvecs = scipy.linalg.eig(covmat)
+    
+    # Descending
+    sortidx = numpy.argsort(eigvals)[::-1]
+    
+    eigvals = eigvals[sortidx]
+    eigvecs = eigvecs[sortidx]
+    
+    eig1 = eigvecs[0]
+    eig2 = eigvecs[1]
+    
+    slope1 = eig1[1]/eig1[0]
+    axis1 = [-slope1, (slope1*mean_x)+mean_y] # [p1, p0] --> y = p1*x + p0
+    
+    slope2 = eig2[1]/eig2[0]
+    axis2 = [-slope2, (slope2*mean_x)+mean_y]
+    
+    result = {
+        "eigvals": eigvals,
+        "eigvecs": eigvecs,
+        "eigaxes": [axis1, axis2]
+    }
+    
+    return result
+
+
 def main() :
     
     l_filename = [
-        #"../ntupleTree.root:treeMaker/tree",
+        "../ntupleTree.root:treeMaker/tree",
         #"../data/ntuples/DoubleElectron_FlatPt-1To100-gun_Phase2Fall22DRMiniAOD-noPU_125X_mcRun4_realistic_v2-v1/ntupleTree.root:treeMaker/tree",
         #"../data/ntuples/RelValZEE_14_CMSSW_13_1_0-131X_mcRun4_realistic_v5_2026D95noPU-v1/ntupleTree.root:treeMaker/tree",
-        "../data/ntuples/RelValZEE_14_CMSSW_13_1_0-131X_mcRun4_realistic_v5_2026D95noPU-v1/ntupleTree_numEvent200.root:treeMaker/tree",
+        #"../data/ntuples/RelValZEE_14_CMSSW_13_1_0-131X_mcRun4_realistic_v5_2026D95noPU-v1/ntupleTree_numEvent200.root:treeMaker/tree",
     ]
     
     print("")
@@ -125,6 +170,9 @@ def main() :
             }
         )
         
+        # Select the EE rechits
+        hgcalEle_SC_hits = hgcalEle_SC_hits[hgcalEle_SC_hits.detector == 8]
+        
         hgcalEle_gsfTrack_hits = awk.zip(
             arrays = {
                 "isInnerTracker": tree_branches["vv_hgcalEle_gsfTrack_hit_isInnerTracker"],
@@ -137,6 +185,12 @@ def main() :
         
         # Select the pixel (inner tracker) hits
         hgcalEle_gsfTrack_hits = hgcalEle_gsfTrack_hits[hgcalEle_gsfTrack_hits.isInnerTracker > 0]
+        
+        # Set layers
+        d_layerHit = {}
+        for layer in range(1, 28) :
+            
+            d_layerHit[f"SC_hits_layer{layer}"] = hgcalEle_SC_hits[hgcalEle_SC_hits.layer == layer]
         
         hgcalEles = awk.zip(
             arrays = {
@@ -156,6 +210,8 @@ def main() :
                 
                 "vtx_rho": tree_branches["v_hgcalEle_vtx_rho"],
                 "vtx_z": tree_branches["v_hgcalEle_vtx_z"],
+                
+                **d_layerHit
             },
             depth_limit = 1, # Do not broadcast
         )
@@ -240,15 +296,57 @@ def main() :
                     
                     plot_xrange = -1*plot_xrange[::-1]
                 
-                ##fit_res = numpy.polyfit(x = pixHits.z, y = pixHits.rho, deg = 1)
-                #fit_res = numpy.polyfit(x = eles.SC_hits[iEle].z, y = eles.SC_hits[iEle].rho, w = eles.SC_hits[iEle].energy, deg = 1)
-                #fit_yval = numpy.polyval(p = fit_res, x = plot_xrange)
-                #
+                fit_res = numpy.polyfit(x = eles.SC_hits[iEle].z, y = eles.SC_hits[iEle].rho, w = eles.SC_hits[iEle].energy, deg = 1)
+                fit_yval = numpy.polyval(p = fit_res, x = plot_xrange)
+                
+                axes_scatter_rhoz.plot(
+                    plot_xrange,
+                    fit_yval,
+                    "k:",
+                )
+                
+                # PCA
+                pca_result = pca_2d(
+                    x = eles.SC_hits[iEle].z,
+                    y = eles.SC_hits[iEle].rho,
+                )
+                
+                axis1_y = numpy.polyval(pca_result["eigaxes"][0], plot_xrange)
+                axes_scatter_rhoz.plot(
+                    plot_xrange,
+                    axis1_y,
+                    "r--",
+                )
+                
+                #axis2_y = numpy.polyval(pca_result["eigaxes"][1], plot_xrange)
                 #axes_scatter_rhoz.plot(
                 #    plot_xrange,
-                #    fit_yval,
-                #    "r--",
+                #    axis2_y,
+                #    "b:",
                 #)
+                
+                
+                # Weighted PCA
+                wpca_result = pca_2d(
+                    x = eles.SC_hits[iEle].z,
+                    y = eles.SC_hits[iEle].rho,
+                    w = eles.SC_hits[iEle].energy,
+                )
+                
+                axis1_y = numpy.polyval(wpca_result["eigaxes"][0], plot_xrange)
+                axes_scatter_rhoz.plot(
+                    plot_xrange,
+                    axis1_y,
+                    "b--",
+                )
+                
+                #axis2_y = numpy.polyval(wpca_result["eigaxes"][1], plot_xrange)
+                #axes_scatter_rhoz.plot(
+                #    plot_xrange,
+                #    axis2_y,
+                #    "b--",
+                #)
+                
                 
                 # Plot the gen electron vertex
                 axes_scatter_rhoz.scatter(

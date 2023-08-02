@@ -7,7 +7,7 @@ import scipy.linalg
 
 arr = numpy.random.multivariate_normal(
     mean = (300, 50),
-    cov = [[55, 50], [50, 100]],
+    cov = [[55, -50], [-50, 100]],
     size = 2000
 )
 
@@ -33,7 +33,7 @@ covmat = numpy.array([
     [cov_xy, cov_yy],
 ])
 
-eigvals, eigvecs = scipy.linalg.eig(covmat)#, left = True, right = True)
+eigvals, eigvecs = scipy.linalg.eig(covmat)
 eig1 = eigvecs[0]
 eig2 = eigvecs[1]
 
