@@ -16,56 +16,6 @@ plt.rcParams.update({
 })
 
 
-def pseudorapidity_to_polar(eta) :
-    
-    theta = 2*numpy.arctan(numpy.exp(-eta))
-    
-    return theta
-
-
-def pca_2d(x, y, w = None) :
-    
-    if (w is None) :
-        w = numpy.ones(len(x))
-    
-    mean_x = numpy.average(x, weights = w)
-    mean_y = numpy.average(y, weights = w)
-    
-    cov_xx = numpy.average(w*(x - mean_x)**2, weights = w)
-    cov_yy = numpy.average(w*(y - mean_y)**2, weights = w)
-    cov_xy = numpy.average(w*(x - mean_x)*(y-mean_y), weights = w)
-    
-    covmat = numpy.array([
-        [cov_xx, cov_xy],
-        [cov_xy, cov_yy],
-    ])
-    
-    eigvals, eigvecs = scipy.linalg.eig(covmat)
-    
-    # Descending
-    sortidx = numpy.argsort(eigvals)[::-1]
-    
-    eigvals = eigvals[sortidx]
-    eigvecs = eigvecs[sortidx]
-    
-    eig1 = eigvecs[0]
-    eig2 = eigvecs[1]
-    
-    slope1 = eig1[1]/eig1[0]
-    axis1 = [-slope1, (slope1*mean_x)+mean_y] # [p1, p0] --> y = p1*x + p0
-    
-    slope2 = eig2[1]/eig2[0]
-    axis2 = [-slope2, (slope2*mean_x)+mean_y]
-    
-    result = {
-        "eigvals": eigvals,
-        "eigvecs": eigvecs,
-        "eigaxes": [axis1, axis2]
-    }
-    
-    return result
-
-
 def main() :
     
     l_filename = [
@@ -112,7 +62,7 @@ def main() :
     colormap = mpl.cm.get_cmap("nipy_spectral").copy()
     
     nEvent_total = 0
-    nEvent_max = 500
+    nEvent_max = 20
     stop_processing = False
     make_plots = False
     show_plots = False
@@ -385,7 +335,7 @@ def main() :
                 )
                 
                 # PCA
-                pca_result = pca_2d(
+                pca_result = utils.pca_2d(
                     x = eles.SC_hits[iEle].z,
                     y = eles.SC_hits[iEle].rho,
                 )
@@ -399,7 +349,7 @@ def main() :
                 )
                 
                 # Weighted PCA
-                wpca_result = pca_2d(
+                wpca_result = utils.pca_2d(
                     x = eles.SC_hits[iEle].z,
                     y = eles.SC_hits[iEle].rho,
                     w = eles.SC_hits[iEle].energy,
@@ -415,7 +365,7 @@ def main() :
                 
                 cylinder_rad = 2
                 ele_SC_hits_inCylinder = eles.SC_hits[iEle][numpy.abs(numpy.polyval(wpca_result["eigaxes"][0], eles.SC_hits[iEle].z) - eles.SC_hits[iEle].rho) < cylinder_rad]
-                wpca_result_inCylinder = pca_2d(
+                wpca_result_inCylinder = utils.pca_2d(
                     x = ele_SC_hits_inCylinder.z,
                     y = ele_SC_hits_inCylinder.rho,
                     w = ele_SC_hits_inCylinder.energy,
@@ -486,13 +436,13 @@ def main() :
                 # Plot HGCal boundary eta lines
                 ax_scatter_rhoz.plot(
                     eta_xrange,
-                    numpy.polyval([numpy.tan(pseudorapidity_to_polar(det_half*1.479)), 0], eta_xrange),
+                    numpy.polyval([numpy.tan(utils.pseudorapidity_to_polar(det_half*1.479)), 0], eta_xrange),
                     "k:",
                 )
                 
                 ax_scatter_rhoz.plot(
                     eta_xrange,
-                    numpy.polyval([numpy.tan(pseudorapidity_to_polar(det_half*3.1)), 0], eta_xrange),
+                    numpy.polyval([numpy.tan(utils.pseudorapidity_to_polar(det_half*3.1)), 0], eta_xrange),
                     "k:",
                 )
                 

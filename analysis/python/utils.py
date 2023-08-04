@@ -12,6 +12,7 @@ import numpy
 import os
 import psutil
 import re
+import scipy
 import sortedcontainers
 import sparse
 import subprocess
@@ -546,6 +547,57 @@ def wait_for_asyncpool(l_job) :
 #    
 #    return 0
 #
+
+
+def pseudorapidity_to_polar(eta) :
+    
+    theta = 2*numpy.arctan(numpy.exp(-eta))
+    
+    return theta
+
+
+def pca_2d(x, y, w = None) :
+    
+    if (w is None) :
+        w = numpy.ones(len(x))
+    
+    mean_x = numpy.average(x, weights = w)
+    mean_y = numpy.average(y, weights = w)
+    
+    cov_xx = numpy.average(w*(x - mean_x)**2, weights = w)
+    cov_yy = numpy.average(w*(y - mean_y)**2, weights = w)
+    cov_xy = numpy.average(w*(x - mean_x)*(y-mean_y), weights = w)
+    
+    covmat = numpy.array([
+        [cov_xx, cov_xy],
+        [cov_xy, cov_yy],
+    ])
+    
+    eigvals, eigvecs = scipy.linalg.eig(covmat)
+    
+    # Descending
+    sortidx = numpy.argsort(eigvals)[::-1]
+    
+    eigvals = eigvals[sortidx]
+    eigvecs = eigvecs[sortidx]
+    
+    eig1 = eigvecs[0]
+    eig2 = eigvecs[1]
+    
+    slope1 = eig1[1]/eig1[0]
+    axis1 = [-slope1, (slope1*mean_x)+mean_y] # [p1, p0] --> y = p1*x + p0
+    
+    slope2 = eig2[1]/eig2[0]
+    axis2 = [-slope2, (slope2*mean_x)+mean_y]
+    
+    result = {
+        "eigvals": eigvals,
+        "eigvecs": eigvecs,
+        "eigaxes": [axis1, axis2]
+    }
+    
+    return result
+
 
 if (__name__ == "__main__") :
     
