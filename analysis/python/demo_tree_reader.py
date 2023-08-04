@@ -75,10 +75,47 @@ def main() :
         #"../data/ntuples/RelValZEE_14_CMSSW_13_1_0-131X_mcRun4_realistic_v5_2026D95noPU-v1/ntupleTree_numEvent200.root:treeMaker/tree",
     ]
     
+    outTreeFileName = "analysisOutputNtuple.root"
+    outTreeFile = uproot.writing.writable.recreate(outTreeFileName)
+    outTreeName = "analysisOutputTree"
+    
+    d_outBranch = {
+        "runNumber": int,
+        "lumiNumber": int,
+        "eventNumber": int,
+        
+        "ele_SC_energy": float,
+        "ele_SC_eta": float,
+        "ele_SC_phi": float,
+        
+        "ele_vtx_rho": float,
+        "ele_vtx_z": float,
+        
+        "ele_wpca_eigval0": float,
+        "ele_wpca_eigval1": float,
+        
+        "ele_wpca_eigaxis0_p0": float,
+        "ele_wpca_eigaxis0_p1": float,
+        
+        "ele_wpca_eigaxis1_p0": float,
+        "ele_wpca_eigaxis1_p1": float,
+    }
+    
+    outTreeFile.mktree(
+        name = outTreeName,
+        branch_types = d_outBranch,
+    )
+    
     print("")
     
     fig_scatter_rhoz = plt.figure(figsize = [10, 8])
     colormap = mpl.cm.get_cmap("nipy_spectral").copy()
+    
+    nEvent_total = 0
+    nEvent_max = 500
+    stop_processing = False
+    make_plots = False
+    show_plots = False
     
     for tree_branches in uproot.iterate(
         files = l_filename,
@@ -110,6 +147,7 @@ def main() :
             
             "v_hgcalEle_matchedGenEle_idx",
             
+            "v_hgcalEle_SC_energy",
             "v_hgcalEle_SC_eta",
             "v_hgcalEle_SC_phi",
             
@@ -148,12 +186,17 @@ def main() :
         cut = "(hgcalEle_count > 0)",
         language = utils.uproot_lang,
         num_workers = 10,
-        #max_num_elements = 10,
-        step_size = 5,
+        #max_num_elements = 1,
+        step_size = 20,
     ) :
         
         #print(tree_branches["hgcalEle_count"])
         print(type(tree_branches))
+        
+        # Empty the output branches
+        for key in d_outBranch:
+            
+            d_outBranch[key] = []
         
         genEles = awk.zip(
             arrays = {
@@ -198,11 +241,11 @@ def main() :
         hgcalEle_gsfTrack_hits = hgcalEle_gsfTrack_hits[hgcalEle_gsfTrack_hits.isInnerTracker > 0]
         
         # Set layers
-        hgcalEE_nLayer = 26
-        d_layerHit = {}
-        for layer in range(1, hgcalEE_nLayer+1) :
-            
-            d_layerHit[f"SC_hits_layer{layer}"] = hgcalEle_SC_hits[hgcalEle_SC_hits.layer == layer]
+        #hgcalEE_nLayer = 26
+        #d_layerHit = {}
+        #for layer in range(1, hgcalEE_nLayer+1) :
+        #    
+        #    d_layerHit[f"SC_hits_layer{layer}"] = hgcalEle_SC_hits[hgcalEle_SC_hits.layer == layer]
         
         hgcalEles = awk.zip(
             arrays = {
@@ -213,6 +256,7 @@ def main() :
                 "phi": tree_branches["v_hgcalEle_phi"],
                 "energy": tree_branches["v_hgcalEle_energy"],
                 
+                "SC_energy": tree_branches["v_hgcalEle_SC_energy"],
                 "SC_eta": tree_branches["v_hgcalEle_SC_eta"],
                 "SC_phi": tree_branches["v_hgcalEle_SC_phi"],
                 "SC_hit_count": tree_branches["v_hgcalEle_SC_hit_count"],
@@ -223,7 +267,7 @@ def main() :
                 "vtx_rho": tree_branches["v_hgcalEle_vtx_rho"],
                 "vtx_z": tree_branches["v_hgcalEle_vtx_z"],
                 
-                **d_layerHit
+                #**d_layerHit
             },
             depth_limit = 1, # Do not broadcast
         )
@@ -260,7 +304,18 @@ def main() :
             
             for iEle in range(nEle) :
                 
-                print(iEle)
+                tag = (
+                    "["
+                    f"iEvent: {nEvent_total}, "
+                    f"runNumber: {runNumber}, "
+                    f"lumiNumber: {lumiNumber}, "
+                    f"eventNumber: {eventNumber}, "
+                    f"iEle: {iEle}"
+                    "]"
+                )
+                
+                print(tag)
+                
                 fig_scatter_rhoz.clf()
                 ax_scatter_rhoz = fig_scatter_rhoz.add_subplot(1, 1, 1)
                 #ax_scatter_rhoz_zoom = fig_scatter_rhoz.add_subplot(2, 1, 2)
@@ -460,10 +515,50 @@ def main() :
                 )
                 
                 fig_scatter_rhoz.tight_layout()#pad = 0)
-                fig_scatter_rhoz.show()#block = False)
-                #plt.show(block = False)
-                #plt.savefig("test.pdf")
-                print("Plotted")
+                
+                if (show_plots) :
+                    fig_scatter_rhoz.canvas.draw()
+                    fig_scatter_rhoz.show()#block = False)
+                    fig_scatter_rhoz.canvas.flush_events()
+                
+                
+                d_outBranch["runNumber"].append(runNumber)
+                d_outBranch["lumiNumber"].append(lumiNumber)
+                d_outBranch["eventNumber"].append(eventNumber)
+                
+                d_outBranch["ele_SC_energy"].append(eles.SC_energy[iEle])
+                d_outBranch["ele_SC_eta"].append(eles.SC_eta[iEle])
+                d_outBranch["ele_SC_phi"].append(eles.SC_phi[iEle])
+                
+                d_outBranch["ele_vtx_rho"].append(eles.vtx_rho[iEle])
+                d_outBranch["ele_vtx_z"].append(eles.vtx_z[iEle])
+                
+                d_outBranch["ele_wpca_eigval0"].append(wpca_result["eigvals"][0])
+                d_outBranch["ele_wpca_eigval1"].append(wpca_result["eigvals"][1])
+                
+                # y = p1*x + p0
+                # The axis coefficient list is ordered as [p1, p0]
+                d_outBranch["ele_wpca_eigaxis0_p0"].append(wpca_result["eigaxes"][0][1])
+                d_outBranch["ele_wpca_eigaxis0_p1"].append(wpca_result["eigaxes"][0][0])
+                
+                d_outBranch["ele_wpca_eigaxis1_p0"].append(wpca_result["eigaxes"][1][1])
+                d_outBranch["ele_wpca_eigaxis1_p1"].append(wpca_result["eigaxes"][0][0])
+                
+            
+            nEvent_total += 1
+            stop_processing = (nEvent_max > 0 and nEvent_total >= nEvent_max)
+            
+            if (stop_processing) : break
+        
+        # Check if all branches are filled equally
+        d_branchLen = [len(_l) for _l in d_outBranch.values()]
+        assert(min(d_branchLen) == max(d_branchLen))
+        
+        outTreeFile[outTreeName].extend(d_outBranch)
+        
+        if (stop_processing) : break
+    
+    outTreeFile.close()
     
     return 0
 
