@@ -6,23 +6,20 @@ import mplhep
 import numpy
 import uproot
 
-#import ROOT
-#import root2matplot as r2mpl
-
 import utils
 
-#plt.rcParams.update({
-#    "text.usetex",
-#    "font.family",
-#    "font.weight",
-#    "font.size",
-#})
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "Helvetica",
+    "font.weight": "bold",
+    "font.size": 17,
+})
 
 
 def main() :
     
     l_filename = [
-        "analysisOutputNtuple.root:analysisOutputTree"
+        "output/analysisOutputNtuple.root:analysisOutputTree"
     ]
     
     h1_demo = hist.Hist(
@@ -48,14 +45,14 @@ def main() :
             "ele_vtx_rho",
             "ele_vtx_z",
             
-            "ele_wpca_eigval0",
-            "ele_wpca_eigval1",
-            
-            "ele_wpca_eigaxis0_p0",
-            "ele_wpca_eigaxis0_p1",
-            
-            "ele_wpca_eigaxis1_p0",
-            "ele_wpca_eigaxis1_p1",
+            #"ele_wpca_eigval0",
+            #"ele_wpca_eigval1",
+            #
+            #"ele_wpca_eigaxis0_p0",
+            #"ele_wpca_eigaxis0_p1",
+            #
+            #"ele_wpca_eigaxis1_p0",
+            #"ele_wpca_eigaxis1_p1",
         ],
         language = utils.uproot_lang,
         num_workers = 10,
@@ -86,10 +83,13 @@ def main() :
     
     #
     #fig2 = plt.figure(figsize = [10, 8])
-    #ax2 = fig2.add_subplot(1, 1, 1)
+    #ax2 = fig2.add_subplot(1, 
+    # 1, 1)
+    
+    h2_demo /= h2_demo.sum()
     
     mplhep.histplot(h1_demo, ax = ax1)
-    mplhep.hist2dplot(h2_demo, ax = ax2)
+    mplhep.hist2dplot(h2_demo, ax = ax2, norm = mpl.colors.LogNorm())
     mplhep.histplot(h1_profx, ax = ax3)
     
     fig.canvas.draw()

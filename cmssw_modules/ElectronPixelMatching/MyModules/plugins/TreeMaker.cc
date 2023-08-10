@@ -122,8 +122,7 @@ class TreeMaker : public edm::one::EDAnalyzer<edm::one::SharedResources>
     bool debug;
     bool isGunSample;
     
-    bool storeSimHit;
-    bool storeRecHit;
+    bool storePixelRecHit;
     
     double eleGenMatchDeltaR;
     double phoGenMatchDeltaR;
@@ -344,8 +343,7 @@ TreeMaker::TreeMaker(const edm::ParameterSet& iConfig) :
     debug = iConfig.getParameter <bool>("debug");
     isGunSample = iConfig.getParameter <bool>("isGunSample");
     
-    storeSimHit = iConfig.getParameter <bool>("storeSimHit");
-    storeRecHit = iConfig.getParameter <bool>("storeRecHit");
+    storePixelRecHit = iConfig.getParameter <bool>("storePixelRecHit");
     
     tok_generator = consumes <GenEventInfoProduct>(iConfig.getParameter <edm::InputTag>("label_generator"));
     tok_genParticle = consumes <std::vector <reco::GenParticle>>(iConfig.getParameter <edm::InputTag>("label_genParticle"));
@@ -585,11 +583,14 @@ void TreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         
         nRecHit++;
         
-        treeOutput->fillVarV("v_pixelRecHit_isValid", (int) recHit.isValid());
-        treeOutput->fillVarV("v_pixelRecHit_globalPos_x", globalPos.x());
-        treeOutput->fillVarV("v_pixelRecHit_globalPos_y", globalPos.y());
-        treeOutput->fillVarV("v_pixelRecHit_globalPos_z", globalPos.z());
-        treeOutput->fillVarV("v_pixelRecHit_globalPos_rho", globalPos.perp());
+        if(storePixelRecHit)
+        {
+            treeOutput->fillVarV("v_pixelRecHit_isValid", (int) recHit.isValid());
+            treeOutput->fillVarV("v_pixelRecHit_globalPos_x", globalPos.x());
+            treeOutput->fillVarV("v_pixelRecHit_globalPos_y", globalPos.y());
+            treeOutput->fillVarV("v_pixelRecHit_globalPos_z", globalPos.z());
+            treeOutput->fillVarV("v_pixelRecHit_globalPos_rho", globalPos.perp());
+        }
     }
     
     treeOutput->setVar("pixelRecHit_count", nRecHit);

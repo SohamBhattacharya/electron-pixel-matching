@@ -21,6 +21,10 @@ d_conditionOpt["PhaseIISpring22DRMiniAOD"] = {
     "Era": eras.Phase2C17I13M9,
 }
 
+l_storeHits_opt = [
+    "pixelRecHits",
+]
+
 ############################## Parse arguments ##############################
 
 import FWCore.ParameterSet.VarParsing as VarParsing
@@ -77,11 +81,11 @@ options.register("conditionOpt",
     "Condition option. Choices: %s" %(", ".join(list(d_conditionOpt.keys()))) # Description
 )
 
-options.register("storeSimHit",
-    0, # Default value
-    VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+options.register("storeHits",
+    [], # Default value
+    VarParsing.VarParsing.multiplicity.list, # singleton or list
     VarParsing.VarParsing.varType.int, # string, int, or float
-    "Store sim-hits" # Description
+    f"List of hit types to store. Choices: {', '.join(l_storeHits_opt)}" # Description
 )
 
 options.register("storeRecHit",
@@ -89,20 +93,6 @@ options.register("storeRecHit",
     VarParsing.VarParsing.multiplicity.singleton, # singleton or list
     VarParsing.VarParsing.varType.int, # string, int, or float
     "Store rec-hits" # Description
-)
-
-options.register("storeHGCALlayerClus",
-    0, # Default value
-    VarParsing.VarParsing.multiplicity.singleton, # singleton or list
-    VarParsing.VarParsing.varType.int, # string, int, or float
-    "Store HGCal layer clusters" # Description
-)
-
-options.register("storeSuperClusTICLclus",
-    0, # Default value
-    VarParsing.VarParsing.multiplicity.singleton, # singleton or list
-    VarParsing.VarParsing.varType.int, # string, int, or float
-    "Store info about TICL-electron SC, SC seed, and TICL-cluster matches" # Description
 )
 
 options.register("eleGenMatchDeltaR",
@@ -178,6 +168,10 @@ options.register("depGraph",
 options.parseArguments()
 
 assert(options.conditionOpt in d_conditionOpt.keys())
+
+for _ in options.storeHits :
+    
+    assert(_ in l_storeHits_opt)
 
 process = cms.Process(processName, d_conditionOpt[options.conditionOpt]["Era"])
 
@@ -315,8 +309,7 @@ process.treeMaker = cms.EDAnalyzer(
     
     isGunSample = cms.bool(bool(options.isGunSample)),
     
-    storeSimHit = cms.bool(bool(options.storeSimHit)),
-    storeRecHit = cms.bool(bool(options.storeRecHit)),
+    storePixelRecHit = cms.bool("pixelRecHits" in options.storeHits),
     
     eleGenMatchDeltaR = cms.double(options.eleGenMatchDeltaR),
     phoGenMatchDeltaR = cms.double(options.phoGenMatchDeltaR),

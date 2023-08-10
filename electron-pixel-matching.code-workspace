@@ -8,6 +8,24 @@
         }
     ],
     "settings": {
+        "files.exclude": {
+            "**/CMSSW_*_*_*/biglib": true,
+            "**/CMSSW_*_*_*/.SCRAM": true,
+            "**/CMSSW_*_*_*/biglib": true,
+            "**/CMSSW_*_*_*/bin": true,
+            "**/CMSSW_*_*_*/cfipython": true,
+            "**/CMSSW_*_*_*/config": true,
+            "**/CMSSW_*_*_*/doc": true,
+            "**/CMSSW_*_*_*/external": true,
+            "**/CMSSW_*_*_*/include": true,
+            "**/CMSSW_*_*_*/lib": true,
+            "**/CMSSW_*_*_*/logs": true,
+            "**/CMSSW_*_*_*/objs": true,
+            "**/CMSSW_*_*_*/python": true,
+            "**/CMSSW_*_*_*/static": true,
+            "**/CMSSW_*_*_*/test": true,
+            "**/CMSSW_*_*_*/tmp": true,
+        },
         "files.associations": {
             "*.cc*bak": "cpp",
             "*.icc": "cpp",
