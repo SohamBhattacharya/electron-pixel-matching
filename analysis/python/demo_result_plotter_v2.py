@@ -23,11 +23,14 @@ def main() :
     ]
     
     l_xvar_name = [
-        "ele_SC_eta",
+        #"ele_SC_eta",
+        "ele_SC_abseta",
+        "ele_SC_energy",
     ]
     
     l_xvar_bins = [
-        hist.axis.Regular(bins = 50, start = 1.4, stop = 3.2, name = "x")
+        hist.axis.Regular(bins = 50, start = 1.4, stop = 3.2, name = "x"),
+        hist.axis.Regular(bins = 20, start = 0, stop = 1000, name = "x"),
     ]
     
     l_yvar_name = [
@@ -35,8 +38,12 @@ def main() :
     ]
     
     l_yvar_bins = [
-        hist.axis.Regular(bins = 100, start = -50, stop = 50, name = "y")
+        hist.axis.Regular(bins = 100, start = -50, stop = 50, name = "y"),
     ]
+    
+    aliases = {
+        "ele_SC_abseta": "abs(ele_SC_eta)"
+    }
     
     l_hist2d = []
     
@@ -57,6 +64,7 @@ def main() :
                     "lumiNumber",
                     "eventNumber",
                 ] + [l_xvar_name[ixvar]] + [l_yvar_name[iyvar]],
+                aliases = aliases,
                 language = utils.uproot_lang,
                 num_workers = 10,
                 #max_num_elements = 1,
@@ -67,7 +75,7 @@ def main() :
                 a_weights = numpy.ones(count) # dummy weights
                 
                 h2d_tmp.fill(
-                    abs(tree_branches[l_xvar_name[ixvar]]),
+                    tree_branches[l_xvar_name[ixvar]],
                     tree_branches[l_yvar_name[iyvar]],
                     weight = a_weights
                 )
@@ -86,6 +94,9 @@ def main() :
         fig.canvas.flush_events()
         
         print("Plotted.")
+        
+        fig.clf()
+        plt.close(fig)
     
     return 0
 
