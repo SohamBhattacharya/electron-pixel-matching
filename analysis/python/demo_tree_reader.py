@@ -381,12 +381,15 @@ def main() :
                 wpca_dz = (-wpca_result["eigaxes"][0][1]/wpca_result["eigaxes"][0][0]) - eles.vtx_z[iEle]
                 
                 # Weighted PCA in cylinder
-                cylinder_rad = 3
-                ele_SC_hits_inCylinder = eles.SC_hits[iEle][numpy.abs(numpy.polyval(wpca_result["eigaxes"][0], eles.SC_hits[iEle].z) - eles.SC_hits[iEle].rho) < cylinder_rad]
+                cylinder_rad = 99
+                ele_SC_hits_drho = numpy.abs(numpy.polyval(wpca_result["eigaxes"][0], eles.SC_hits[iEle].z) - eles.SC_hits[iEle].rho)
+                ele_SC_hits_inCylinder = eles.SC_hits[iEle][ele_SC_hits_drho < cylinder_rad]
+                ele_SC_hits_inCylinder_drho = ele_SC_hits_drho[ele_SC_hits_drho < cylinder_rad]
                 wpca_result_inCylinder = utils.pca_2d(
                     x = ele_SC_hits_inCylinder.z,
                     y = ele_SC_hits_inCylinder.rho,
-                    w = ele_SC_hits_inCylinder.energy,
+                    #w = ele_SC_hits_inCylinder.energy,
+                    w = ele_SC_hits_inCylinder.energy / ele_SC_hits_inCylinder_drho,
                 )
                 wpca_inCyl_dz = (-wpca_result_inCylinder["eigaxes"][0][1]/wpca_result_inCylinder["eigaxes"][0][0]) - eles.vtx_z[iEle]
                 
@@ -426,7 +429,12 @@ def main() :
                 #    f"({eles.genEle[iEle].vtx_rho}, {eles.genEle[iEle].vtx_z})"
                 #)
                 
-                wcentroidfit_res = numpy.polyfit(x = a_layer_meanz[a_layer_nonzero], y = a_layer_meanrho[a_layer_nonzero], w = a_layer_energy[a_layer_nonzero], deg = 1)
+                wcentroidfit_res = numpy.polyfit(
+                    x = a_layer_meanz[a_layer_nonzero],
+                    y = a_layer_meanrho[a_layer_nonzero],
+                    w = a_layer_energy[a_layer_nonzero],
+                    deg = 1
+                )
                 wcentroidfit_yval = numpy.polyval(p = wcentroidfit_res, x = plot_xrange)
                 wcentroidfit_dz = (-wcentroidfit_res[1]/wcentroidfit_res[0]) - eles.vtx_z[iEle]
                 
